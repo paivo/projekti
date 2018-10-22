@@ -1,0 +1,29 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <title>Kysy tai Vastaa</title>
+        <meta charset="utf-8" />
+    </head>
+
+    <body>
+        <h1 th:text="${#lists.isEmpty(vastaukset)} ? 'Lisää ensin vastaus!' : 'Valitse vastaus'"> </h1>
+        <h2 th:text="${kysymys.kysymysteksti}"/>
+        <ul>
+            <li th:each="vastaus: ${vastaukset}">
+                <a th:text="${vastaus.vastausteksti}" th:href="${'/oikein/' + vastaus.id}"></a>
+                <form method="POST" th:action="@{~/deletevastaus/{id}(id=${vastaus.id})}">
+                    <input type="submit" value="poista"/>
+                </form>
+            </li>
+        </ul><br/>
+        <form method="POST" action="@{~/add/{id}(id=${kysymys.id})}">
+        Lisää vastausvaihtoehto:<br/>
+        <input type="text" name="vastausvaihtoehto"/><br/>
+        oikein:
+        <input type="checkbox" name="oikein"/><br/>
+        <input type="submit" value="+"/>
+    </form>
+        
+    </body>
+</html>

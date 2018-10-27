@@ -39,22 +39,14 @@ public class Main {
             String kurssi = req.queryParams("kurssi");
             String aihe = req.queryParams("aihe");
             String kysymysteksti = req.queryParams("kysymys");
-            Boolean oikein = true;
-            String vastausteksti = req.queryParams("vastausvaihtoehto");
             Kysymys kysymys = new Kysymys(kurssi, aihe, kysymysteksti);
             kdao.save(kysymys);
-            if (req.queryParams("oikein") == null) {
-                oikein = false;
-            }
-            if (vastausteksti!= null){
-                vdao.save(new Vastaus(kdao.findOne(kysymys).getId(), vastausteksti, oikein));
-            }
             res.redirect("/");
             return "";
         });
 
         get("/kurssit", (req, res) -> {
-            HashMap kysymykset = new HashMap();
+            HashMap kysymykset = new HashMap<>();
             kysymykset.put("kysymykset", kdao.findKysymysPerKurssi());
             return new ModelAndView(kysymykset, "kurssit");
         }, new ThymeleafTemplateEngine());
@@ -82,9 +74,10 @@ public class Main {
         });
         
         get("/vastaukset/:id", (req, res) -> {
-            Kysymys kysymys = kdao.findOne(Integer.parseInt(req.params("id")));
+            Integer id = Integer.parseInt(req.params("id"));
+            Kysymys kysymys = kdao.findOne(id);
             HashMap vastaukset = new HashMap();
-            vastaukset.put("vastaukset", vdao.getKysymyksenVastaukset(kysymys));
+            vastaukset.put("vastaukset", vdao.getKysymyksenVastaukset(id));
             vastaukset.put("kysymys", kysymys);
             return new ModelAndView(vastaukset, "vastaukset");
         }, new ThymeleafTemplateEngine());

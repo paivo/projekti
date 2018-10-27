@@ -34,7 +34,7 @@ public class KysymysDao implements Dao<Kysymys, Integer> {
         List<Kysymys> kysymykset = new ArrayList();
         Connection connection = database.getConnection();
 
-        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Kysymys WHERE 1=1");
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Kysymys");
         ResultSet rs = stmt.executeQuery();
 
         while (rs.next()) {
@@ -45,20 +45,12 @@ public class KysymysDao implements Dao<Kysymys, Integer> {
         rs.close();
         stmt.close();
         connection.close();
-
-        if (kysymykset.isEmpty()) {
-            return null;
-        }
-
         return kysymykset;
     }
 
     @Override
     public void save(Kysymys kysymys) throws SQLException {
         if ( (kysymys.getKurssi().isEmpty() || kysymys.getAihe().isEmpty() || kysymys.getKysymysteksti().isEmpty()) ) {
-            return;
-        }
-        if (findOne(kysymys)!=null) {
             return;
         }
         Connection conn = database.getConnection();
@@ -89,16 +81,15 @@ public class KysymysDao implements Dao<Kysymys, Integer> {
     @Override
     public Kysymys findOne(Kysymys kysymys) throws SQLException {
         try (Connection conn = database.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Kysymys WHERE kurssi = ? AND aihe = ? AND kysymysteksti = ?");
+            PreparedStatement stmt = conn.prepareStatement("SELECT id FROM Kysymys WHERE kurssi = ? AND aihe = ? AND kysymysteksti = ?");
             stmt.setString(1, kysymys.getKurssi());
             stmt.setString(2, kysymys.getAihe());
             stmt.setString(3, kysymys.getKysymysteksti());
 
             ResultSet result = stmt.executeQuery();
             result.next();
-            Kysymys kysymys2 = new Kysymys( result.getString("kurssi"), result.getString("aihe"), result.getString("kysymysteksti"));
-            kysymys2.setId(result.getInt("id"));
-            return kysymys2;
+            kysymys.setId(result.getInt("id"));
+            return kysymys;
         }
     }
     
@@ -143,12 +134,11 @@ public class KysymysDao implements Dao<Kysymys, Integer> {
     
     public List<Kysymys> findKysymysPerKurssi() throws SQLException {
         List<Kysymys> kysymykset = new ArrayList();
-        //Tarkistetaan onko kysymykset listassa jo kysymystä jolla sama kurssi.
         for(Kysymys kysymys: findAll()){
             int i = 0;
             for (Kysymys kysymys2: kysymykset){
                 if (kysymys.getKurssi().equals(kysymys2.getKurssi())){
-                    i++;
+                    i=1;
                 }
             }
             if (i==0){

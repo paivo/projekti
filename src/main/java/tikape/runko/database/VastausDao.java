@@ -48,9 +48,6 @@ public class VastausDao implements Dao <Vastaus,Integer>{
     
     @Override
     public void save(Vastaus vastaus) throws SQLException {
-        if (findOne(vastaus)!=null) {
-            return;
-        }
         Connection conn = database.getConnection();
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO Vastaus (kysymys_id, vastausteksti, oikein) VALUES (?, ?, ?)");
         stmt.setInt(1, vastaus.getKysymysId());
@@ -112,16 +109,15 @@ public class VastausDao implements Dao <Vastaus,Integer>{
         }
     }
     
-    public List<Vastaus> getKysymyksenVastaukset(Kysymys kysymys) throws SQLException {
+    public List<Vastaus> getKysymyksenVastaukset(Integer kysymys_id) throws SQLException {
         List<Vastaus> vastaukset = new ArrayList();
         Connection connection = database.getConnection();
-        
-        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Vastaus WHERE = ?");
-        stmt.setInt(1, kysymys.getId());
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Vastaus WHERE kysymys_id = ?");
+        stmt.setInt(1, kysymys_id);
         ResultSet rs = stmt.executeQuery();
         
         while (rs.next()) {            
-            Vastaus v = new Vastaus(rs.getInt("kysymys_id"), rs.getString("vastausteksti"), rs.getBoolean("oikein"));
+            Vastaus v = new Vastaus(kysymys_id, rs.getString("vastausteksti"), rs.getBoolean("oikein"));
             v.setId(rs.getInt("id"));
             vastaukset.add(v);
         }
@@ -129,10 +125,6 @@ public class VastausDao implements Dao <Vastaus,Integer>{
         stmt.close();
         connection.close();
         
-        if(vastaukset.isEmpty()){
-            return null;
-        }
-
         return vastaukset;
     }
 }

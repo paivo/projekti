@@ -7,7 +7,7 @@
     </head>
 
     <body>
-        <h1 th:text="${#lists.isEmpty(vastaukset)} ? 'Lisää ensin vastaus!' : 'Valitse vastaus'"> </h1>
+        <h1 th:text="${#lists.isEmpty(vastaukset)} ? 'Lisää ensin vastausvaihtoehto!' : 'Valitse vastaus'"> </h1>
         <h2 th:text="${kysymys.kysymysteksti}"/>
         <ul>
             <li th:each="vastaus: ${vastaukset}">
@@ -17,12 +17,16 @@
                 </form>
             </li>
         </ul><br/>
-        <form method="POST" action="@{~/add/{id}(id=${kysymys.id})}">
+        <form method="POST" th:action="@{~/add/{id}(id=${kysymys.id})}">
         Lisää vastausvaihtoehto:<br/>
         <input type="text" name="vastausvaihtoehto"/><br/>
         oikein:
         <input type="checkbox" name="oikein"/><br/>
-        <input type="submit" value="+"/>
+        <input type="submit" value="+"/><br/>
+        <br/>
+        <br/>
+        <a th:href="@{~/}">Takaisin etusivulle</a>
+
     </form>
         
     </body>

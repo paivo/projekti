@@ -8,15 +8,18 @@
 
     <body>
         <h1 th:text="${#lists.isEmpty(kysymykset)} ? 'Lisää ensin kysymys!' : 'Valitse kurssi'"> </h1>
+
+        <ul>
+            <li th:each="kysymys: ${kysymykset}">
+                <a th:href="@{~/aiheet/{id}(id=${kysymys.id})}">
+                    <span th:text="${kysymys.kurssi}">Kurssi</span>
+                </a>
+            </li>
+        </ul>
+        <br/>
+        <a th:href="@{~/}">Takaisin etusivulle</a>
+
         
-            <ul>
-                <li th:each="kysymys: ${kysymykset}">
-                    <a th:text="${kysymys.kurssi}" th:href="${'/aiheet/' + kysymys.id}"></a>
-                    <form method="POST" th:action="@{~/deletekysymys/{id}(id=${kysymys.id})}">
-                        <input type="submit" value="poista" />
-                    </form>
-                </li>
-            </ul>
      
     </body>
 </html>

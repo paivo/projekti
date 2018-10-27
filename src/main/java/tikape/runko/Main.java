@@ -69,7 +69,7 @@ public class Main {
             Integer id = Integer.parseInt(req.params("id"));
             vdao.deleteKysymyksenVastaukset(id);
             kdao.delete(id);
-            res.redirect("/");
+            res.redirect("/kurssit");
             return "";
         });
         
@@ -95,7 +95,7 @@ public class Main {
                 oikein = false;
             }
             vdao.save(new Vastaus(Integer.parseInt(req.params("id")), vastausteksti, oikein));
-            res.redirect("/");
+            res.redirect("/vastaukset/"+req.params("id"));
             return "";
         });
 
